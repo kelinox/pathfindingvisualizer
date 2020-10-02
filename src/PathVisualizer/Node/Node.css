@@ -1,0 +1,18 @@
+.node {
+  display: inline-block;
+  border: solid black 1px;
+  height: 25px;
+  width: 25px;
+}
+
+.starting-node {
+  background-color: green !important;
+}
+
+.ending-node {
+  background-color: red !important;
+}
+
+.visited {
+  background-color: pink;
+}
