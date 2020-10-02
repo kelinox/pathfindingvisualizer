@@ -70,21 +70,22 @@ class PathVisualizer extends Component {
   dijsktra() {
     const { start, end } = this.state;
     const nodes = this.getNodesForDijsktra();
-    console.log(nodes);
-    console.log(end[0] * 50 + end[1]);
     nodes[start[0] * 50 + start[1]].distanceToStart = 0;
     let currentNode = this.getMinNode(nodes);
     const endNode = nodes[end[0] * 50 + end[1]];
-    console.log(endNode);
     const visitedNodes = [];
 
     while (currentNode !== endNode) {
       var neighbors = this.getNeighbor(currentNode);
 
       for (let i = 0; i < neighbors.length; i++) {
-        var nNode = this.getNode(nodes, neighbors[i][0], neighbors[i][1]);
-        nodes[nNode.row * 50 + nNode.col].distanceToStart =
-          currentNode.distanceToStart + 1;
+        if (start[0] !== neighbors[i][0] || start[1] !== neighbors[i][1]) {
+          let n = nodes[neighbors[i][0] * 50 + neighbors[i][1]];
+
+          if (n.distanceToStart === Number.MAX_SAFE_INTEGER)
+            nodes[neighbors[i][0] * 50 + neighbors[i][1]].distanceToStart =
+              currentNode.distanceToStart + 1;
+        }
       }
       currentNode.visited = true;
       visitedNodes.push(currentNode);
@@ -114,7 +115,9 @@ class PathVisualizer extends Component {
         const { nodes } = this.state;
         nodes[visitedNodes[i].row][visitedNodes[i].col] = visitedNodes[i];
         this.setState({ nodes });
-      }, 100);
+
+        if (i === visitedNodes.length - 1) this.getPathFromStartToEnd();
+      }, 15);
     }
   }
 
@@ -188,6 +191,33 @@ class PathVisualizer extends Component {
 
   getNode(nodes, row, col) {
     return nodes[row * 50 + col];
+  }
+
+  getPathFromStartToEnd() {
+    const { nodes } = this.state;
+    let currentNode = this.state.nodes[this.state.end[0]][this.state.end[1]];
+    let startNode = this.state.nodes[this.state.start[0]][this.state.start[1]];
+    const path = [];
+    while (currentNode !== startNode) {
+      path.push(currentNode);
+
+      currentNode = this.getClosestNeighbor(nodes, currentNode);
+    }
+    console.log(path);
+  }
+
+  getClosestNeighbor(nodes, node) {
+    const neighbors = this.getNeighbor(node);
+    let closest = nodes[neighbors[0][0]][neighbors[0][1]];
+    for (let i = 1; i < neighbors.length; i++) {
+      if (
+        closest.distanceToStart >
+        nodes[neighbors[i][0]][neighbors[i][1]].distanceToStart
+      )
+        closest = nodes[neighbors[i][0]][neighbors[i][1]];
+    }
+
+    return closest;
   }
 }
 
