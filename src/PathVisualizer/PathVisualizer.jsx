@@ -5,7 +5,14 @@ import Node from "./Node/Node";
 class PathVisualizer extends Component {
   constructor(props) {
     super(props);
-    this.state = { nodes: [], start: [4, 15], end: [8, 45] };
+    this.state = {
+      nodes: [],
+      start: [4, 15],
+      end: [4, 30],
+      addObstacles: false,
+    };
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
@@ -17,14 +24,23 @@ class PathVisualizer extends Component {
 
     return (
       <div>
-        <div>
+        <div id="header">
           <button onClick={this.dijsktra.bind(this)}>Dijsktra</button>
           <button onClick={this.reset.bind(this)}>Reset</button>
+        </div>
+        <div id="actions">
+          <input
+            type="checkbox"
+            id="obstacle"
+            name="obstacle"
+            onChange={this.handleObstacleCheck.bind(this)}
+          />
+          <label htmlFor="obstacle">Add obstacles</label>
         </div>
         <div id="grid">
           {nodes.map((row, index) => {
             return (
-              <div key={index}>
+              <div key={index} className="column">
                 {row.map((node, nodeIndex) => {
                   return (
                     <Node
@@ -32,6 +48,11 @@ class PathVisualizer extends Component {
                       isStart={node.isStart}
                       isEnd={node.isEnd}
                       distanceToStart={node.distanceToStart}
+                      isInPath={node.isInPath}
+                      onClick={this.handleClick}
+                      row={node.row}
+                      col={node.col}
+                      obstacle={node.obstacle}
                     />
                   );
                 })}
@@ -41,6 +62,19 @@ class PathVisualizer extends Component {
         </div>
       </div>
     );
+  }
+
+  handleObstacleCheck(e) {
+    const addObstacles = e.target.checked;
+    this.setState({ addObstacles });
+  }
+
+  handleClick(row, col) {
+    const { nodes } = this.state;
+    if (this.state.addObstacles) {
+      nodes[row][col].obstacle = true;
+      this.setState({ nodes });
+    }
   }
 
   createGraph() {
@@ -55,6 +89,8 @@ class PathVisualizer extends Component {
           isEnd: row === this.state.end[0] && col === this.state.end[1],
           distanceToStart: Number.MAX_SAFE_INTEGER,
           visited: false,
+          isInPath: false,
+          obstacle: false,
         };
         currentRow.push(currentNode);
       }
@@ -82,7 +118,7 @@ class PathVisualizer extends Component {
         if (start[0] !== neighbors[i][0] || start[1] !== neighbors[i][1]) {
           let n = nodes[neighbors[i][0] * 50 + neighbors[i][1]];
 
-          if (n.distanceToStart === Number.MAX_SAFE_INTEGER)
+          if (!n.obstacle && n.distanceToStart === Number.MAX_SAFE_INTEGER)
             nodes[neighbors[i][0] * 50 + neighbors[i][1]].distanceToStart =
               currentNode.distanceToStart + 1;
         }
@@ -103,6 +139,7 @@ class PathVisualizer extends Component {
           visited: false,
           col: this.state.nodes[row][col].col,
           row: this.state.nodes[row][col].row,
+          obstacle: this.state.nodes[row][col].obstacle,
         });
       }
     }
@@ -117,7 +154,7 @@ class PathVisualizer extends Component {
         this.setState({ nodes });
 
         if (i === visitedNodes.length - 1) this.getPathFromStartToEnd();
-      }, 15);
+      }, 5 * i);
     }
   }
 
@@ -194,27 +231,35 @@ class PathVisualizer extends Component {
   }
 
   getPathFromStartToEnd() {
-    const { nodes } = this.state;
-    let currentNode = this.state.nodes[this.state.end[0]][this.state.end[1]];
-    let startNode = this.state.nodes[this.state.start[0]][this.state.start[1]];
+    const nodes = this.getNodesForDijsktra();
+    let currentNode = nodes[this.state.end[0] * 50 + this.state.end[1]];
+    let startNode = nodes[this.state.start[0] * 50 + this.state.start[1]];
     const path = [];
+
     while (currentNode !== startNode) {
       path.push(currentNode);
 
       currentNode = this.getClosestNeighbor(nodes, currentNode);
     }
-    console.log(path);
+
+    for (let i = path.length - 1; i >= 0; i--) {
+      setTimeout(() => {
+        const { nodes } = this.state;
+        nodes[path[i].row][path[i].col].isInPath = true;
+        this.setState({ nodes });
+      }, 100 * (i - path.length));
+    }
   }
 
   getClosestNeighbor(nodes, node) {
     const neighbors = this.getNeighbor(node);
-    let closest = nodes[neighbors[0][0]][neighbors[0][1]];
+    let closest = nodes[neighbors[0][0] * 50 + neighbors[0][1]];
     for (let i = 1; i < neighbors.length; i++) {
       if (
         closest.distanceToStart >
-        nodes[neighbors[i][0]][neighbors[i][1]].distanceToStart
+        nodes[neighbors[i][0] * 50 + neighbors[i][1]].distanceToStart
       )
-        closest = nodes[neighbors[i][0]][neighbors[i][1]];
+        closest = nodes[neighbors[i][0] * 50 + neighbors[i][1]];
     }
 
     return closest;

@@ -1,3 +1,16 @@
-#grid {
-  width: 80%;
+#header {
+  height: 64px;
+}
+
+#actions {
+  height: 64px;
+}
+
+#grid > div {
+  margin: 0;
+  padding: 0;
+}
+
+.column {
+  height: 32px;
 }
