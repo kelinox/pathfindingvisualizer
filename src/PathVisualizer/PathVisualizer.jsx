@@ -10,9 +10,11 @@ class PathVisualizer extends Component {
       start: [4, 15],
       end: [4, 30],
       addObstacles: false,
+      mouseDown: false,
     };
 
     this.handleClick = this.handleClick.bind(this);
+    this.handleMouseOver = this.handleMouseOver.bind(this);
   }
 
   componentDidMount() {
@@ -37,7 +39,11 @@ class PathVisualizer extends Component {
           />
           <label htmlFor="obstacle">Add obstacles</label>
         </div>
-        <div id="grid">
+        <div
+          id="grid"
+          onMouseDown={this.handleMouseDown.bind(this)}
+          onMouseUp={this.handleMouseUp.bind(this)}
+        >
           {nodes.map((row, index) => {
             return (
               <div key={index} className="column">
@@ -53,6 +59,7 @@ class PathVisualizer extends Component {
                       row={node.row}
                       col={node.col}
                       obstacle={node.obstacle}
+                      onMouseOver={this.handleMouseOver}
                     />
                   );
                 })}
@@ -64,9 +71,34 @@ class PathVisualizer extends Component {
     );
   }
 
+  handleMouseDown() {
+    this.setState({
+      mouseDown: true,
+    });
+  }
+
+  handleMouseUp() {
+    this.setState({
+      mouseDown: false,
+    });
+  }
+
   handleObstacleCheck(e) {
     const addObstacles = e.target.checked;
     this.setState({ addObstacles });
+  }
+
+  handleMouseOver(row, col) {
+    const { nodes } = this.state;
+    if (
+      this.state.addObstacles &&
+      this.state.mouseDown &&
+      !nodes[row][col].obstacle
+    ) {
+      console.log("test");
+      nodes[row][col].obstacle = true;
+      this.setState({ nodes });
+    }
   }
 
   handleClick(row, col) {

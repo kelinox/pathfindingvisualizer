@@ -27,12 +27,17 @@ class Node extends Component {
       <div
         className={`node ${this.state.extraClass} ${color}`}
         onClick={this.handleClick.bind(this)}
+        onMouseOver={this.handleMouseOver.bind(this)}
       ></div>
     );
   }
 
   handleClick() {
     this.props.onClick(this.props.row, this.props.col);
+  }
+
+  handleMouseOver() {
+    this.props.onMouseOver(this.props.row, this.props.col);
   }
 }
 

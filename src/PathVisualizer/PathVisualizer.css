@@ -1,9 +1,28 @@
 #header {
   height: 64px;
+  line-height: 64px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.3);
+}
+
+#header > button {
+  padding: 12px;
+  padding-left: 24px;
+  padding-right: 24px;
+  margin-right: 8px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  background-color: #26293a;
+  cursor: pointer;
+}
+
+#header > button:hover {
+  background-color: #191b25;
 }
 
 #actions {
   height: 64px;
+  line-height: 64px;
 }
 
 #grid > div {
