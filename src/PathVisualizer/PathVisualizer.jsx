@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import "./PathVisualizer.css";
 import Node from "./Node/Node";
+import Dijsktra from "./Algorithm/Dijkstra";
+import AStar from "./Algorithm/AStar";
 
 class PathVisualizer extends Component {
   constructor(props) {
@@ -8,9 +10,11 @@ class PathVisualizer extends Component {
     this.state = {
       nodes: [],
       start: [4, 15],
-      end: [4, 30],
+      end: [6, 37],
       addObstacles: false,
       mouseDown: false,
+      dijkstra: new Dijsktra(),
+      aStar: new AStar(),
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -28,6 +32,7 @@ class PathVisualizer extends Component {
       <div>
         <div id="header">
           <button onClick={this.dijsktra.bind(this)}>Dijsktra</button>
+          <button onClick={this.aStar.bind(this)}>A Star</button>
           <button onClick={this.reset.bind(this)}>Reset</button>
         </div>
         <div id="actions">
@@ -135,47 +140,29 @@ class PathVisualizer extends Component {
     this.createGraph();
   }
 
+  aStar() {
+    const { nodes, start, end } = this.state;
+    let visited = this.state.aStar.execute(nodes, start, end);
+
+    this.updateNodesAStar(visited);
+  }
+
   dijsktra() {
-    const { start, end } = this.state;
-    const nodes = this.getNodesForDijsktra();
-    nodes[start[0] * 50 + start[1]].distanceToStart = 0;
-    let currentNode = this.getMinNode(nodes);
-    const endNode = nodes[end[0] * 50 + end[1]];
-    const visitedNodes = [];
-
-    while (currentNode !== endNode) {
-      var neighbors = this.getNeighbor(currentNode);
-
-      for (let i = 0; i < neighbors.length; i++) {
-        if (start[0] !== neighbors[i][0] || start[1] !== neighbors[i][1]) {
-          let n = nodes[neighbors[i][0] * 50 + neighbors[i][1]];
-
-          if (!n.obstacle && n.distanceToStart === Number.MAX_SAFE_INTEGER)
-            nodes[neighbors[i][0] * 50 + neighbors[i][1]].distanceToStart =
-              currentNode.distanceToStart + 1;
-        }
-      }
-      currentNode.visited = true;
-      visitedNodes.push(currentNode);
-      currentNode = this.getMinNode(nodes);
-    }
+    const { nodes, start, end } = this.state;
+    let visitedNodes = this.state.dijkstra.execute(nodes, start, end);
     this.updateNodes(visitedNodes);
   }
 
-  getNodesForDijsktra() {
-    var nodes = [];
-    for (let row = 0; row < 20; row++) {
-      for (let col = 0; col < 50; col++) {
-        nodes.push({
-          distanceToStart: this.state.nodes[row][col].distanceToStart,
-          visited: false,
-          col: this.state.nodes[row][col].col,
-          row: this.state.nodes[row][col].row,
-          obstacle: this.state.nodes[row][col].obstacle,
-        });
-      }
+  updateNodesAStar(visitedNodes) {
+    for (let i = 0; i < visitedNodes.length; i++) {
+      setTimeout(() => {
+        const { nodes } = this.state;
+        nodes[visitedNodes[i].row][visitedNodes[i].col] = visitedNodes[i];
+        this.setState({ nodes });
+
+        if (i === visitedNodes.length - 1) this.getPathFromStartToEndAStar();
+      }, 5 * i);
     }
-    return nodes;
   }
 
   updateNodes(visitedNodes) {
@@ -190,89 +177,8 @@ class PathVisualizer extends Component {
     }
   }
 
-  getVisitedNodes(nodes) {
-    var visited = [];
-    for (let row = 0; row < 20; row++) {
-      for (let col = 0; col < 50; col++) {
-        if (nodes[row * 50 + col].visited) visited.push(nodes[row * 50 + col]);
-      }
-    }
-
-    return visited;
-  }
-
-  getMinNode(nodes) {
-    var unvisited = [];
-    for (let row = 0; row < 20; row++) {
-      for (let col = 0; col < 50; col++) {
-        if (nodes[row * 50 + col].visited === false)
-          unvisited.push(nodes[row * 50 + col]);
-      }
-    }
-
-    return unvisited.sort((a, b) => a.distanceToStart - b.distanceToStart)[0];
-  }
-
-  getNeighbor(node) {
-    if (node.row === 0 && node.col === 0) {
-      return [
-        [node.row, node.col + 1],
-        [node.row + 1, node.col],
-      ];
-    } else if (node.col === 0 && node.row === 19) {
-      return [
-        [node.row, node.col + 1],
-        [node.row - 1, node.col],
-      ];
-    } else if (node.row === 0) {
-      return [
-        [node.row, node.col - 1],
-        [node.row, node.col + 1],
-        [node.row + 1, node.col],
-      ];
-    } else if (node.col === 0) {
-      return [
-        [node.row, node.col + 1],
-        [node.row - 1, node.col],
-        [node.row + 1, node.col],
-      ];
-    } else if (node.row === 19) {
-      return [
-        [node.row, node.col - 1],
-        [node.row, node.col + 1],
-        [node.row - 1, node.col],
-      ];
-    } else if (node.col === 49) {
-      return [
-        [node.row, node.col - 1],
-        [node.row - 1, node.col],
-        [node.row + 1, node.col],
-      ];
-    }
-
-    return [
-      [node.row, node.col - 1],
-      [node.row, node.col + 1],
-      [node.row - 1, node.col],
-      [node.row + 1, node.col],
-    ];
-  }
-
-  getNode(nodes, row, col) {
-    return nodes[row * 50 + col];
-  }
-
   getPathFromStartToEnd() {
-    const nodes = this.getNodesForDijsktra();
-    let currentNode = nodes[this.state.end[0] * 50 + this.state.end[1]];
-    let startNode = nodes[this.state.start[0] * 50 + this.state.start[1]];
-    const path = [];
-
-    while (currentNode !== startNode) {
-      path.push(currentNode);
-
-      currentNode = this.getClosestNeighbor(nodes, currentNode);
-    }
+    let path = this.state.dijkstra.getPathFromStartToEnd();
 
     for (let i = path.length - 1; i >= 0; i--) {
       setTimeout(() => {
@@ -283,18 +189,16 @@ class PathVisualizer extends Component {
     }
   }
 
-  getClosestNeighbor(nodes, node) {
-    const neighbors = this.getNeighbor(node);
-    let closest = nodes[neighbors[0][0] * 50 + neighbors[0][1]];
-    for (let i = 1; i < neighbors.length; i++) {
-      if (
-        closest.distanceToStart >
-        nodes[neighbors[i][0] * 50 + neighbors[i][1]].distanceToStart
-      )
-        closest = nodes[neighbors[i][0] * 50 + neighbors[i][1]];
-    }
+  getPathFromStartToEndAStar() {
+    let path = this.state.aStar.getPathFromStartToEnd();
 
-    return closest;
+    for (let i = path.length - 1; i >= 0; i--) {
+      setTimeout(() => {
+        const { nodes } = this.state;
+        nodes[path[i].row][path[i].col].isInPath = true;
+        this.setState({ nodes });
+      }, 100 * (i - path.length));
+    }
   }
 }
 
