@@ -1,7 +1,11 @@
+.app {
+  text-align: center;
+}
+
 #header {
   height: 64px;
   line-height: 64px;
-  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
 #header > button {
@@ -23,6 +27,7 @@
 #actions {
   height: 64px;
   line-height: 64px;
+  text-align: center;
 }
 
 #grid > div {

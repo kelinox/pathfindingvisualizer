@@ -29,7 +29,7 @@ class PathVisualizer extends Component {
     const { nodes } = this.state;
 
     return (
-      <div>
+      <div className="app">
         <div id="header">
           <button onClick={this.dijsktra.bind(this)}>Dijsktra</button>
           <button onClick={this.aStar.bind(this)}>A Star</button>
