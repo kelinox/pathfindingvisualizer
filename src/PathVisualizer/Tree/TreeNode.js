@@ -1,29 +1,27 @@
 class TreeNode {
-  constructor(data, level) {
+  constructor(data) {
     this.data = data;
-    this.level = level;
     this.leftNode = undefined;
     this.rightNode = undefined;
   }
 
-  insert(data, level) {
+  insert(data) {
     let current = this;
     if (current.data > data) {
       if (current.leftNode !== undefined) {
-        current.leftNode = current.leftNode.insert(data, level + 1);
+        current.leftNode = current.leftNode.insert(data);
         current = this.balanceTree(current);
       } else {
-        current.leftNode = new TreeNode(data, level + 1);
+        current.leftNode = new TreeNode(data);
       }
     } else {
       if (current.rightNode !== undefined) {
-        current.rightNode = current.rightNode.insert(data, level + 1);
+        current.rightNode = current.rightNode.insert(data);
         current = this.balanceTree(current);
       } else {
-        current.rightNode = new TreeNode(data, level + 1);
+        current.rightNode = new TreeNode(data);
       }
     }
-    console.log(current);
     return current;
   }
 
@@ -64,9 +62,6 @@ class TreeNode {
     let pivot = parent.rightNode;
     parent.rightNode = pivot.leftNode;
     pivot.leftNode = parent;
-    pivot.rightNode.level--;
-    pivot.level--;
-    pivot.leftNode.level++;
     return pivot;
   }
 
@@ -74,10 +69,6 @@ class TreeNode {
     let pivot = parent.leftNode;
     parent.leftNode = pivot.rightNode;
     pivot.rightNode = parent;
-    this.increaseAllRightNodeLevel(pivot);
-    //pivot.rightNode.level++;
-    pivot.level--;
-    pivot.leftNode.level--;
     return pivot;
   }
 
@@ -91,14 +82,6 @@ class TreeNode {
     const pivot = parent.right;
     parent.right = this.rotateLL(pivot);
     return this.rotateRR(parent);
-  }
-
-  increaseAllRightNodeLevel(node) {
-    let current = node.rightNode;
-    while (current !== undefined) {
-      current.level++;
-      current = current.rightNode;
-    }
   }
 }
 

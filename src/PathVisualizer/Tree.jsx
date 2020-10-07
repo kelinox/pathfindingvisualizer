@@ -28,7 +28,7 @@ class Tree extends Component {
           <button onClick={this.handleSubmit}>Insert</button>
         </div>
         <div className="tree">
-          {this.draw(this.state.root, false, 400).map((e, index) => (
+          {this.draw(this.state.root, 0, false, 400).map((e, index) => (
             <TreeNodeComponent
               key={index}
               data={e.data}
@@ -68,19 +68,20 @@ class Tree extends Component {
     this.setState({ newData: "" });
   }
 
-  draw(node, isLeft, parentLeft) {
+  draw(node, level, isLeft, parentLeft) {
     let nodes = [];
 
     if (node !== undefined) {
       const xOffset = isLeft ? -1 : 1;
-      let left = parentLeft + xOffset * this.getSpaceBetweenNode(node.level);
+      let left = parentLeft + xOffset * this.getSpaceBetweenNode(level);
       nodes.push({
         data: node.data,
-        top: node.level * 45,
+        top: level * 45,
         left: left,
       });
-      nodes = nodes.concat(this.draw(node.leftNode, true, left));
-      nodes = nodes.concat(this.draw(node.rightNode, false, left));
+      level++;
+      nodes = nodes.concat(this.draw(node.leftNode, level, true, left));
+      nodes = nodes.concat(this.draw(node.rightNode, level, false, left));
     }
 
     return nodes;
