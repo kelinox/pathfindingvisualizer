@@ -4,6 +4,10 @@ import Node from "./Node/Node";
 import Dijsktra from "./Algorithm/Dijkstra";
 import AStar from "./Algorithm/AStar";
 
+import { Button } from "@material-ui/core";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+
 class PathVisualizer extends Component {
   constructor(props) {
     super(props);
@@ -31,18 +35,40 @@ class PathVisualizer extends Component {
     return (
       <div className="app">
         <div id="header">
-          <button onClick={this.dijsktra.bind(this)}>Dijsktra</button>
-          <button onClick={this.aStar.bind(this)}>A Star</button>
-          <button onClick={this.reset.bind(this)}>Reset</button>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={this.dijsktra.bind(this)}
+          >
+            Dijsktra
+          </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={this.aStar.bind(this)}
+          >
+            A Star
+          </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={this.reset.bind(this)}
+          >
+            Reset
+          </Button>
         </div>
         <div id="actions">
-          <input
-            type="checkbox"
-            id="obstacle"
-            name="obstacle"
-            onChange={this.handleObstacleCheck.bind(this)}
+          <FormControlLabel
+            control={
+              <Switch
+                checked={this.state.addObstacles}
+                onChange={this.handleObstacleCheck.bind(this)}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label="Add obstacle"
           />
-          <label htmlFor="obstacle">Add obstacles</label>
         </div>
         <div
           id="grid"
@@ -137,10 +163,19 @@ class PathVisualizer extends Component {
   }
 
   reset() {
-    this.createGraph();
+    const { nodes } = this.state;
+    for (let row = 0; row < 20; row++) {
+      for (let col = 0; col < 50; col++) {
+        nodes[row][col].visited = false;
+        nodes[row][col].distanceToStart = Number.MAX_SAFE_INTEGER;
+        nodes[row][col].isInPath = false;
+      }
+    }
+    this.setState({ nodes });
   }
 
   aStar() {
+    this.reset();
     const { nodes, start, end } = this.state;
     let visited = this.state.aStar.execute(nodes, start, end);
 
@@ -148,6 +183,7 @@ class PathVisualizer extends Component {
   }
 
   dijsktra() {
+    this.reset();
     const { nodes, start, end } = this.state;
     let visitedNodes = this.state.dijkstra.execute(nodes, start, end);
     this.updateNodes(visitedNodes);

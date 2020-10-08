@@ -5,24 +5,45 @@ class TreeNode {
     this.rightNode = undefined;
   }
 
-  insert(data) {
+  insert(data, autoBalance) {
     let current = this;
     if (current.data > data) {
       if (current.leftNode !== undefined) {
         current.leftNode = current.leftNode.insert(data);
-        current = this.balanceTree(current);
+
+        if (autoBalance) current = this.balanceTree(current);
       } else {
         current.leftNode = new TreeNode(data);
       }
     } else {
       if (current.rightNode !== undefined) {
         current.rightNode = current.rightNode.insert(data);
-        current = this.balanceTree(current);
+
+        if (autoBalance) current = this.balanceTree(current);
       } else {
         current.rightNode = new TreeNode(data);
       }
     }
     return current;
+  }
+
+  inorderSort(path) {
+    if (this.leftNode !== undefined) this.leftNode.inorderSort(path);
+    path.push(this.data);
+    if (this.rightNode !== undefined) this.rightNode.inorderSort(path);
+  }
+
+  preorderSort(path) {
+    console.log(this.data);
+    path.push(this.data);
+    if (this.leftNode !== undefined) this.leftNode.preorderSort(path);
+    if (this.rightNode !== undefined) this.rightNode.preorderSort(path);
+  }
+
+  postorderSort(path) {
+    if (this.leftNode !== undefined) this.leftNode.postorderSort(path);
+    if (this.rightNode !== undefined) this.rightNode.postorderSort(path);
+    path.push(this.data);
   }
 
   balanceTree(node) {

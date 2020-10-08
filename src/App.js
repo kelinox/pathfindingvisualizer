@@ -4,23 +4,55 @@ import "./App.css";
 import "./PathVisualizer/PathVisualizer";
 import PathVisualizer from "./PathVisualizer/PathVisualizer";
 import Tree from "./PathVisualizer/Tree";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  Button,
+  AppBar,
+  Typography,
+  Toolbar,
+  IconButton,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+}));
 
 function App() {
+  const classes = useStyles();
+
   return (
     <Router>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/pathfinding">Path finding</Link>
-          </li>
-          <li>
-            <Link to="/tree">Tree</Link>
-          </li>
-        </ul>
-      </nav>
+      <div className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+            ></IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Developer cavern
+            </Typography>
+            <Button>
+              <Link to="/">Home</Link>
+            </Button>
+            <Button>
+              <Link to="/pathfinding">Path finding</Link>
+            </Button>
+            <Button>
+              <Link to="/tree">Tree</Link>
+            </Button>
+          </Toolbar>
+        </AppBar>
+      </div>
       <div>
         <Switch>
           <Route path="/pathfinding">
