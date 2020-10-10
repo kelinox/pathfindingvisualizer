@@ -79,3 +79,11 @@
 .reset {
   background-color: purple;
 }
+
+.bfs {
+  background-color: brown;
+}
+
+.dfs {
+  background-color: darkorchid;
+}

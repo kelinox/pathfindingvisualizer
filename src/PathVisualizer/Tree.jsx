@@ -25,6 +25,9 @@ class Tree extends Component {
     this.preorderSort = this.preorderSort.bind(this);
     this.handleBalancedCheck = this.handleBalancedCheck.bind(this);
     this.reset = this.reset.bind(this);
+    this.getHeight = this.getHeight.bind(this);
+    this.bfs = this.bfs.bind(this);
+    this.dfs = this.dfs.bind(this);
   }
 
   render() {
@@ -67,6 +70,15 @@ class Tree extends Component {
             onClick={this.postorderSort}
           >
             Postorder sort
+          </Button>
+          <Button color="primary" variant="contained" onClick={this.getHeight}>
+            Height
+          </Button>
+          <Button color="primary" variant="contained" onClick={this.bfs}>
+            BFS
+          </Button>
+          <Button color="primary" variant="contained" onClick={this.dfs}>
+            DFS
           </Button>
           <Button color="primary" variant="outlined" onClick={this.reset}>
             Reset
@@ -121,6 +133,14 @@ class Tree extends Component {
                   type = "Reseted";
                   typeClass = "reset";
                   break;
+                case 5:
+                  type = "BFS";
+                  typeClass = "bfs";
+                  break;
+                case 6:
+                  type = "DFS";
+                  typeClass = "dfs";
+                  break;
 
                 default:
                   break;
@@ -150,46 +170,87 @@ class Tree extends Component {
     });
   }
 
+  getHeight() {
+    console.log(this.state.root.height(this.state.root));
+  }
+
+  bfs() {
+    const path = this.state.root.bfs(this.state.root);
+    let text = "";
+    path.map(
+      (e, index) => (text += index !== path.length - 1 ? `${e} -> ` : `${e}`)
+    );
+    this.setLogs([
+      {
+        text: text,
+        type: 5,
+      },
+    ]);
+  }
+
+  dfs() {
+    const path = this.state.root.dfs(this.state.root);
+    let text = "";
+    path.map(
+      (e, index) => (text += index !== path.length - 1 ? `${e} -> ` : `${e}`)
+    );
+    this.setLogs([
+      {
+        text: text,
+        type: 6,
+      },
+    ]);
+  }
+
   inorderSort() {
     const path = [];
     this.state.root.inorderSort(path);
 
-    this.setLogs(
-      path.map((p) => {
-        return {
-          text: `Path through node ${p}`,
-          type: 0,
-        };
-      })
+    let text = "";
+    path.map(
+      (p, index) => (text += index !== path.length - 1 ? `${p} -> ` : `${p}`)
     );
+
+    this.setLogs([
+      {
+        text: text,
+        type: 0,
+      },
+    ]);
   }
 
   preorderSort() {
     const path = [];
     this.state.root.preorderSort(path);
 
-    this.setLogs(
-      path.map((p) => {
-        return {
-          text: `Path through node ${p}`,
-          type: 1,
-        };
-      })
+    let text = "";
+    path.map(
+      (p, index) => (text += index !== path.length - 1 ? `${p} -> ` : `${p}`)
     );
+
+    this.setLogs([
+      {
+        text: text,
+        type: 1,
+      },
+    ]);
   }
 
   postorderSort() {
     const path = [];
     this.state.root.postorderSort(path);
 
-    this.setLogs(
-      path.map((p) => {
-        return {
-          text: `Path through node ${p}`,
-          type: 2,
-        };
-      })
+    let text = "";
+    path.map(
+      (p, index) => (text += index !== path.length - 1 ? `${p} -> ` : `${p}`)
     );
+
+    this.setLogs([
+      {
+        text: text,
+        type: 2,
+      },
+    ]);
   }
 
   handleChange(event) {

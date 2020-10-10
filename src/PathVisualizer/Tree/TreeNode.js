@@ -46,6 +46,45 @@ class TreeNode {
     path.push(this.data);
   }
 
+  height(node) {
+    if (node === undefined) return -1;
+
+    const l = node.height(node.leftNode) + 1;
+    const r = node.height(node.rightNode) + 1;
+    return Math.max(l, r);
+  }
+
+  dfs(root) {
+    let path = [];
+    let stack = [];
+    let current = root;
+    while (current !== undefined) {
+      path.push(current.data);
+
+      if (current.rightNode !== undefined) stack.push(current.rightNode);
+      if (current.leftNode !== undefined) stack.push(current.leftNode);
+
+      current = stack.pop();
+    }
+    return path;
+  }
+
+  bfs(root) {
+    let path = [];
+    let queue = [];
+    let current = root;
+    while (current !== undefined) {
+      path.push(current.data);
+
+      if (current.leftNode !== undefined) queue.push(current.leftNode);
+
+      if (current.rightNode !== undefined) queue.push(current.rightNode);
+
+      current = queue.shift();
+    }
+    return path;
+  }
+
   balanceTree(node) {
     const balancedFactor = this.balanceFactor(node);
 

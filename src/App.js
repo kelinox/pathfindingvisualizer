@@ -12,6 +12,7 @@ import {
   Toolbar,
   IconButton,
 } from "@material-ui/core";
+import SortPage from "./SortingAlgorithm/SortPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,6 +51,9 @@ function App() {
             <Button>
               <Link to="/tree">Tree</Link>
             </Button>
+            <Button>
+              <Link to="/sort">Sort</Link>
+            </Button>
           </Toolbar>
         </AppBar>
       </div>
@@ -60,6 +64,9 @@ function App() {
           </Route>
           <Route path="/tree">
             <Tree />
+          </Route>
+          <Route path="/sort">
+            <SortPage />
           </Route>
         </Switch>
       </div>

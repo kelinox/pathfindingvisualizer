@@ -1,0 +1,14 @@
+.container {
+  padding: 32px;
+}
+
+.array {
+  height: 500px;
+  position: relative;
+}
+
+.array-item {
+  position: absolute;
+  bottom: 0;
+  background-color: gray;
+}
