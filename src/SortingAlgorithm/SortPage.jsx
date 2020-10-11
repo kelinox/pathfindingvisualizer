@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button } from "@material-ui/core";
+import { Button, ListItemSecondaryAction } from "@material-ui/core";
 
 import "./SortPage.css";
 
@@ -11,11 +11,12 @@ class SortPage extends Component {
       sorted: [],
       widthItem: 0,
       max: 0,
-      size: 10,
+      size: 40,
       maxItem: 100,
     };
 
     this.bubbleSort = this.bubbleSort.bind(this);
+    this.quickSort = this.quickSort.bind(this);
     this.reset = this.reset.bind(this);
   }
 
@@ -33,7 +34,7 @@ class SortPage extends Component {
           <Button variant="contained" color="primary" onClick={this.bubbleSort}>
             Bubble sort
           </Button>
-          <Button variant="contained" color="primary" onClick={this.bubbleSort}>
+          <Button variant="contained" color="primary" onClick={this.quickSort}>
             Quick sort
           </Button>
           <Button variant="outlined" color="primary" onClick={this.reset}>
@@ -103,10 +104,64 @@ class SortPage extends Component {
   }
 
   quickSort() {
-    const tracker = [];
+    this.setState({ sorted: this.state.unsorted.map((e) => e) }, () => {
+      const tracker = [];
+      let numbers = this.state.sorted.map((e) => e);
+      numbers = this.qs(numbers, 0, numbers.length - 1, tracker);
+
+      console.log(tracker);
+      console.log(numbers);
+
+      for (let i = 0; i < tracker.length; i++) {
+        setTimeout(() => {
+          const numbersSorted = this.state.sorted;
+
+          const tmp = numbersSorted[tracker[i][0]];
+          numbersSorted[tracker[i][0]] = numbersSorted[tracker[i][1]];
+          numbersSorted[tracker[i][1]] = tmp;
+
+          this.setState({ sorted: numbersSorted });
+        }, 50 * i);
+      }
+    });
   }
 
-  qs(array, start, end, tracker) {}
+  qs(array, start, end, tracker) {
+    if (array.length < 1) return;
+
+    const index = this.partition(array, start, end, tracker);
+
+    if (start < index - 1) {
+      this.qs(array, start, index - 1, tracker);
+    }
+
+    if (index < end) {
+      this.qs(array, index, end, tracker);
+    }
+
+    return array;
+  }
+
+  partition(array, start, end, tracker) {
+    const pivot = array[Math.floor((end + start) / 2)];
+    let i = start;
+    let j = end;
+    while (i <= j) {
+      while (array[i] < pivot) i++;
+
+      while (array[j] > pivot) j--;
+
+      if (i <= j) {
+        tracker.push([i, j]);
+        const tmp = array[j];
+        array[j] = array[i];
+        array[i] = tmp;
+        i++;
+        j--;
+      }
+    }
+    return i;
+  }
 }
 
 export default SortPage;
