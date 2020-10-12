@@ -11,12 +11,13 @@ class SortPage extends Component {
       sorted: [],
       widthItem: 0,
       max: 0,
-      size: 40,
+      size: 100,
       maxItem: 100,
     };
 
     this.bubbleSort = this.bubbleSort.bind(this);
     this.quickSort = this.quickSort.bind(this);
+    this.mergeSort = this.mergeSort.bind(this);
     this.reset = this.reset.bind(this);
   }
 
@@ -36,6 +37,9 @@ class SortPage extends Component {
           </Button>
           <Button variant="contained" color="primary" onClick={this.quickSort}>
             Quick sort
+          </Button>
+          <Button variant="contained" color="primary" onClick={this.mergeSort}>
+            Merge sort
           </Button>
           <Button variant="outlined" color="primary" onClick={this.reset}>
             Generate
@@ -196,6 +200,71 @@ class SortPage extends Component {
       }
     }
     return i;
+  }
+
+  mergeSort() {
+    this.setState(
+      {
+        sorted: this.state.unsorted.map((e) => {
+          e.moved = false;
+          return e;
+        }),
+      },
+      () => {
+        const tracker = [];
+        let numbers = this.state.sorted.map((e) => e.value);
+        const tmp = this.state.sorted.map(() => undefined);
+        this.ms(numbers, tmp, 0, numbers.length - 1, tracker);
+        this.setState({
+          sorted: numbers.map((e) => {
+            return { value: e, moved: false };
+          }),
+        });
+        this.displayMoves(tracker);
+      }
+    );
+  }
+
+  ms(array, tmp, start, end, tracker) {
+    if (start >= end) return;
+
+    const middle = Math.floor((end + start) / 2);
+    this.ms(array, tmp, start, middle, tracker);
+    this.ms(array, tmp, middle + 1, end, tracker);
+    this.mergeHalves(array, tmp, start, end, tracker);
+  }
+
+  mergeHalves(array, tmp, start, end, tracker) {
+    const leftEnd = Math.floor((end + start) / 2);
+    const size = end - start + 1;
+
+    let left = start;
+    let right = leftEnd + 1;
+    let index = start;
+
+    while (left <= leftEnd && right <= end) {
+      if (array[left] <= array[right]) {
+        tmp[index] = array[left];
+        left++;
+      } else {
+        tmp[index] = array[right];
+        right++;
+      }
+      index++;
+    }
+
+    this.arraycopy(array, left, tmp, index, leftEnd - left + 1);
+    this.arraycopy(array, right, tmp, index, end - right + 1);
+    this.arraycopy(tmp, start, array, start, size);
+  }
+
+  arraycopy(src, srcPos, dst, dstPos, length) {
+    let j = dstPos;
+    let tempArr = src.slice(srcPos, srcPos + length);
+    for (let e in tempArr) {
+      dst[j] = tempArr[e];
+      j++;
+    }
   }
 
   displayMoves(tracker) {
