@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import { Button } from "@material-ui/core";
+import { Button, Fab } from "@material-ui/core";
+import PauseIcon from "@material-ui/icons/Pause";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 
 import "./SortPage.css";
 
@@ -13,12 +15,18 @@ class SortPage extends Component {
       max: 0,
       size: 100,
       maxItem: 100,
+      timeouts: [],
+      paused: false,
+      tracker: [],
+      step: -1,
     };
 
     this.bubbleSort = this.bubbleSort.bind(this);
     this.quickSort = this.quickSort.bind(this);
     this.mergeSort = this.mergeSort.bind(this);
     this.reset = this.reset.bind(this);
+    this.pause = this.pause.bind(this);
+    this.play = this.play.bind(this);
   }
 
   componentDidMount() {
@@ -29,6 +37,14 @@ class SortPage extends Component {
     const arrayStyle = {
       with: window.innerWidth - 80,
     };
+
+    const stylePause = {
+      display: !this.state.paused ? "" : "none",
+    };
+    const stylePlay = {
+      display: this.state.paused ? "" : "none",
+    };
+
     return (
       <div className="container">
         <div className="actions">
@@ -64,8 +80,37 @@ class SortPage extends Component {
             );
           })}
         </div>
+        <div className="actions">
+          <Fab color="primary" onClick={this.pause} style={stylePause}>
+            <PauseIcon />
+          </Fab>
+          <Fab color="primary" onClick={this.play} style={stylePlay}>
+            <PlayArrowIcon />
+          </Fab>
+        </div>
       </div>
     );
+  }
+
+  pause() {
+    let { timeouts } = this.state;
+
+    for (let i = 0; i < timeouts.length; i++) {
+      clearTimeout(timeouts[i]);
+    }
+
+    this.setState({ timeouts: [], paused: true });
+  }
+
+  play() {
+    let { timeouts } = this.state;
+    const { tracker } = this.state;
+
+    for (let i = this.state.step; i < tracker.length; i++) {
+      timeouts.push(this.displaySwap(tracker, i, 50 * (i - this.state.step)));
+    }
+
+    this.setState({ timeouts, paused: false });
   }
 
   /**
@@ -268,19 +313,26 @@ class SortPage extends Component {
   }
 
   displayMoves(tracker) {
+    const { timeouts } = this.state;
     for (let i = 0; i < tracker.length; i++) {
-      setTimeout(() => {
-        const numbersSorted = this.state.sorted;
-
-        this.switchElement(numbersSorted, tracker[i][0], tracker[i][1]);
-
-        this.setMoved(numbersSorted, false);
-        numbersSorted[tracker[i][0]].moved = true;
-        numbersSorted[tracker[i][1]].moved = true;
-
-        this.setState({ sorted: numbersSorted });
-      }, 50 * i);
+      timeouts.push(this.displaySwap(tracker, i, 50 * i));
     }
+    this.setState({ timeouts, tracker });
+  }
+
+  displaySwap(tracker, i, timer) {
+    const id = setTimeout(() => {
+      const numbersSorted = this.state.sorted;
+
+      this.switchElement(numbersSorted, tracker[i][0], tracker[i][1]);
+
+      this.setMoved(numbersSorted, false);
+      numbersSorted[tracker[i][0]].moved = true;
+      numbersSorted[tracker[i][1]].moved = true;
+
+      this.setState({ sorted: numbersSorted, step: i + 1 });
+    }, timer);
+    return id;
   }
 
   /**
