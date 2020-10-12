@@ -126,7 +126,6 @@ class PathVisualizer extends Component {
       this.state.mouseDown &&
       !nodes[row][col].obstacle
     ) {
-      console.log("test");
       nodes[row][col].obstacle = true;
       this.setState({ nodes });
     }

@@ -73,7 +73,7 @@
 }
 
 .added {
-  background-color: red;
+  background-color: rosybrown;
 }
 
 .reset {
@@ -86,4 +86,8 @@
 
 .dfs {
   background-color: darkorchid;
+}
+
+.height {
+  background-color: orchid;
 }

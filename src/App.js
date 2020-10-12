@@ -3,7 +3,7 @@ import { Link, Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import "./App.css";
 import "./PathVisualizer/PathVisualizer";
 import PathVisualizer from "./PathVisualizer/PathVisualizer";
-import Tree from "./PathVisualizer/Tree";
+import Tree from "./Tree/Tree";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import TreeNode from "./Tree/TreeNode";
-import TreeNodeComponent from "./Tree/Node";
+import TreeNodeComponent from "./Tree/TreeNodeComponent";
 import "./Tree.css";
 
 import { Button, TextField } from "@material-ui/core";
@@ -141,6 +141,10 @@ class Tree extends Component {
                   type = "DFS";
                   typeClass = "dfs";
                   break;
+                case 7:
+                  type = "Height";
+                  typeClass = "height";
+                  break;
 
                 default:
                   break;
@@ -171,7 +175,13 @@ class Tree extends Component {
   }
 
   getHeight() {
-    console.log(this.state.root.height(this.state.root));
+    let height = this.state.root.height(this.state.root);
+    this.setLogs([
+      {
+        text: `Height: ${height}`,
+        type: 7,
+      },
+    ]);
   }
 
   bfs() {

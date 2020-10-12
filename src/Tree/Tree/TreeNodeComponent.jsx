@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./Node.css";
+import "./TreeNode.css";
 
 class TreeNodeComponent extends Component {
   constructor(props) {

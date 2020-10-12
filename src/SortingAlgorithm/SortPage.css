@@ -12,3 +12,22 @@
   bottom: 0;
   background-color: gray;
 }
+
+.moved {
+  animation-name: moved;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+}
+
+@keyframes moved {
+  from {
+    background-color: red;
+  }
+
+  to {
+    background-color: red;
+  }
+}

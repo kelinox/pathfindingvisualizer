@@ -48,7 +48,6 @@ class AStar {
     let currentNode = this.graph[this.end[0] * 50 + this.end[1]];
     let startNode = this.graph[this.start[0] * 50 + this.start[1]];
     const path = [];
-    console.log(this.end[0] * 50 + this.end[1]);
 
     while (currentNode !== startNode) {
       path.push(currentNode);
@@ -78,7 +77,7 @@ class AStar {
         });
       }
     }
-    console.log(graph);
+
     return graph;
   }
 
