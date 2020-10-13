@@ -1,12 +1,35 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import "./PathVisualizer.css";
 import Node from "./Node/Node";
 import Dijsktra from "./Algorithm/Dijkstra";
 import AStar from "./Algorithm/AStar";
 
-import { Button } from "@material-ui/core";
+import { Button, Tab, Tabs, Typography } from "@material-ui/core";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <div>{children}</div>}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
 
 class PathVisualizer extends Component {
   constructor(props) {
@@ -19,10 +42,12 @@ class PathVisualizer extends Component {
       mouseDown: false,
       dijkstra: new Dijsktra(),
       aStar: new AStar(),
+      tabsValue: 0,
     };
 
     this.handleClick = this.handleClick.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
   }
 
   componentDidMount() {
@@ -98,8 +123,101 @@ class PathVisualizer extends Component {
             );
           })}
         </div>
+        <div className="blog">
+          <div className="blog-tabs">
+            <Tabs
+              centered
+              value={this.state.tabsValue}
+              onChange={this.handleTabChange}
+              aria-label="simple tabs example"
+            >
+              <Tab label="Dijkstra" />
+              <Tab label="A Star" />
+            </Tabs>
+          </div>
+          <div className="blog-content">
+            <TabPanel value={this.state.tabsValue} index={0}>
+              <Typography variant="h4">Introduction</Typography>
+              <Typography variant="h6">Description</Typography>
+              <div className="blog-body">
+                There is a set of problems in computer science that require us
+                to find the shortest path between a set of points. The
+                applications are numerous and commonplace — from satellite
+                navigation to internet packet routing; even finding the shortest
+                length of wire needed to connect pins on a circuit board is an
+                example of a shortest path problem. Seeing as this type of
+                problem arises so frequently, there are some standard algorithms
+                that can be used to find a solution. One of these is known as
+                Dijkstra’s algorithm. It was designed by Dutch physicist Edsger
+                Dijkstra in 1956, when he thought about how he might calculate
+                the shortest route from Rotterdam to Groningen.
+              </div>
+              <Typography variant="h6">Algorithm</Typography>
+              <div className="blog-body">
+                The steps of the algorithm are describe below:
+                <ul>
+                  <li>
+                    Mark your selected initial node with a current distance of 0
+                    and the rest with infinity.
+                  </li>
+                  <li>
+                    Set the non-visited node with the smallest current distance
+                    as the current node C.
+                  </li>
+                  <li>
+                    For each neighbour N of your current node C: add the current
+                    distance of C with the weight of the edge connecting C-N. If
+                    it's smaller than the current distance of N, set it as the
+                    new current distance of N.
+                  </li>
+                  <li>Mark the current node C as visited.</li>
+                  <li>If there are non-visited nodes, go to step 2.</li>
+                </ul>
+              </div>
+              <Typography variant="h4">Code</Typography>
+              <div className="blog-body">
+                We will see here a possible implementation of the Dijkstra
+                algorithm using the javascript language. The code will be the
+                one used on this website. You can easily use that code base in
+                your prefered coding language as it is not using any complex
+                data structure.
+                <br />
+                First, we will start by create a class named Dijkstra which will
+                contain all the logic.
+              </div>
+              <pre>
+                <code>
+                  {`
+class Dijkstra { 
+  execute(nodes, start, end) {}
+}`}
+                </code>
+              </pre>
+            </TabPanel>
+            <TabPanel value={this.state.tabsValue} index={1}>
+              <Typography variant="h3">Introduction</Typography>
+              <div className="blog-body">
+                Another pathfinding solution, the A* search algorithm, builds on
+                the principles of Dijkstra’s. It adds some functionality that
+                makes it much better at finding the path between a source and a
+                target. Dijkstra’s algorithm is really good at finding the
+                shortest paths to all of the nodes in a graph. However, when
+                finding a target node, it is designed to always follow the node
+                with the shortest path in its unvisited list, regardless of
+                where that node is in relation to the target. This leads to some
+                unnecessary computation of paths that are technically shorter,
+                but are not closer to the target.
+              </div>
+            </TabPanel>
+          </div>
+        </div>
       </div>
     );
+  }
+
+  handleTabChange(event, newValue) {
+    console.log(newValue);
+    this.setState({ tabsValue: newValue });
   }
 
   handleMouseDown() {

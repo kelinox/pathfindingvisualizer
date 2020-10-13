@@ -260,11 +260,6 @@ class SortPage extends Component {
         let numbers = this.state.sorted.map((e) => e.value);
         const tmp = this.state.sorted.map(() => undefined);
         this.ms(numbers, tmp, 0, numbers.length - 1, tracker);
-        this.setState({
-          sorted: numbers.map((e) => {
-            return { value: e, moved: false };
-          }),
-        });
         this.displayMoves(tracker);
       }
     );
@@ -292,21 +287,23 @@ class SortPage extends Component {
         tmp[index] = array[left];
         left++;
       } else {
+        tracker.push([left, index]);
         tmp[index] = array[right];
         right++;
       }
       index++;
     }
 
-    this.arraycopy(array, left, tmp, index, leftEnd - left + 1);
-    this.arraycopy(array, right, tmp, index, end - right + 1);
-    this.arraycopy(tmp, start, array, start, size);
+    this.arraycopy(array, left, tmp, index, leftEnd - left + 1, tracker);
+    this.arraycopy(array, right, tmp, index, end - right + 1, tracker);
+    this.arraycopy(tmp, start, array, start, size, tracker);
   }
 
-  arraycopy(src, srcPos, dst, dstPos, length) {
+  arraycopy(src, srcPos, dst, dstPos, length, tracker) {
     let j = dstPos;
     let tempArr = src.slice(srcPos, srcPos + length);
     for (let e in tempArr) {
+      tracker.push([j, e]);
       dst[j] = tempArr[e];
       j++;
     }
